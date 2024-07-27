@@ -1,0 +1,17 @@
+# Google File System (GFS) Implementation in Go
+
+## Overview
+Provide a detailed overview of the project, including the motivation and goals of implementing GFS in Go.
+
+## Design Decisions
+Discuss the design choices made during the implementation, such as the architecture of the master and chunk servers, fault tolerance mechanisms, and metadata management.
+
+## Implementation Details
+Explain the code structure, including the roles of different packages and modules. Detail the implementation of core features like file operations, chunk management, and communication protocols.
+
+## Usage Instructions
+Provide step-by-step instructions on how to run the master server, chunk servers, and client. Include examples of file operations that can be performed using the client.
+
+## Conclusion
+Summarize the project and any future improvements or considerations.
+

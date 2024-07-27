@@ -1,0 +1,104 @@
+# Google File System (GFS) Implementation in Go
+
+## Overview
+
+The Google File System (GFS) is a scalable distributed file system designed to provide efficient, reliable access to data using large clusters of commodity hardware. This implementation of GFS in Go aims to demonstrate the core concepts and architecture of GFS. It is intended for educational purposes and as a starting point for further exploration and development.
+
+## Design Decisions
+
+### Architecture
+
+The GFS architecture is designed around a master-slave model, where:
+- **Master Server**: Manages metadata, including the namespace, access control, and chunk locations.
+- **Chunk Servers**: Store file data in fixed-size chunks and serve client requests for data.
+
+### Fault Tolerance
+
+GFS is designed to handle hardware failures gracefully:
+- **Chunk Replication**: Each chunk is replicated across multiple chunk servers to ensure data availability in case of server failure.
+- **Heartbeat Messages**: The master server periodically sends heartbeat messages to chunk servers to check their status and detect failures.
+
+### Metadata Management
+
+Metadata in GFS is managed efficiently to minimize overhead:
+- **In-Memory Metadata**: The master server keeps all metadata in memory for fast access.
+- **Operation Logs**: Changes to the metadata are logged persistently to ensure durability.
+
+## Implementation Details
+
+### Code Structure
+
+The project is organized into several main packages:
+
+- `master`: Contains the implementation of the master server, including metadata management and communication with chunk servers.
+- `chunkserver`: Contains the implementation of the chunk servers, including data storage, replication, and handling client requests.
+- `client`: Provides the client-side interface for interacting with the file system.
+- `common`: Contains shared data structures and utility functions used by the master, chunk servers, and client.
+
+### Master Server
+
+The master server is responsible for:
+- **Namespace Management**: Handling file and directory operations (e.g., create, delete, rename).
+- **Chunk Management**: Allocating chunks, maintaining chunk replicas, and monitoring chunk servers.
+- **Client and Chunk Server Communication**: Handling requests from clients and chunk servers, and coordinating data transfers.
+
+### Chunk Server
+
+Each chunk server is responsible for:
+- **Storing Chunks**: Managing the storage of chunks on disk.
+- **Serving Client Requests**: Reading and writing chunk data as requested by clients.
+- **Chunk Replication**: Replicating chunks to other chunk servers as directed by the master server.
+
+### Client
+
+The client library provides an interface for:
+- **File Operations**: Creating, reading, writing, and deleting files.
+- **Communication**: Interacting with the master server to obtain metadata and with chunk servers to read/write data.
+
+### Communication Protocol
+
+Communication between the master server, chunk servers, and clients is implemented using gRPC for efficient and reliable messaging.
+
+## Usage Instructions
+
+### Running the GFS Master Server
+
+1. **Start the master server:**
+    ```sh
+    go run cmd/master/main.go
+    ```
+
+### Running GFS Chunk Servers
+
+1. **Start chunk servers:**
+    ```sh
+    go run cmd/chunkserver/main.go -id=1
+    go run cmd/chunkserver/main.go -id=2
+    go run cmd/chunkserver/main.go -id=3
+    ```
+    Repeat for as many chunk servers as needed, each with a unique `-id`.
+
+### Running the GFS Client
+
+1. **Start the client:**
+    ```sh
+    go run cmd/client/main.go
+    ```
+
+2. **Perform File Operations:**
+    Use the client to perform file operations such as creating, reading, and writing files. Example:
+    ```sh
+    # Create a file
+    ./client create /path/to/file
+
+    # Write data to the file
+    ./client write /path/to/file "Hello, GFS!"
+
+    # Read data from the file
+    ./client read /path/to/file
+    ```
+
+## Conclusion
+
+This project provides a foundational implementation of the Google File System (GFS) in Go. While it simplifies some aspects of the original GFS design, it captures the key principles and architecture. Future improvements could include enhanced fault tolerance mechanisms, more sophisticated metadata management, and optimization for large-scale deployments.
+
